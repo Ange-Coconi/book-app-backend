@@ -6,6 +6,7 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
       return next();
     } else {
       req.session.userId = 1;
+      return next();
     }
   }
 

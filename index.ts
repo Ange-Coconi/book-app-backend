@@ -18,15 +18,15 @@ app.use('/auth', authRouter); // Use authentication routes
 app.use('/api', booksRouter); 
 
 
-app.get('/', (req, res) => { 
-  if (req.session.views) { 
-    req.session.views++; 
-    res.send(`<p>Number of views: ${req.session.views}</p>`); 
-  } else { 
-    req.session.views = 1; 
-    res.send('Welcome! Refresh the page to start counting your visits.'); 
-  } 
-});
+// app.get('/', (req, res) => { 
+//   if (req.session.views) { 
+//     req.session.views++; 
+//     res.send(`<p>Number of views: ${req.session.views}</p>`); 
+//   } else { 
+//     req.session.views = 1; 
+//     res.send('Welcome! Refresh the page to start counting your visits.'); 
+//   } 
+// });
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

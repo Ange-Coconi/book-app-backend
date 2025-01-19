@@ -18,10 +18,10 @@ router.post('/login', async (req: Request,res: Response,next: NextFunction): Pro
     const { username, password } = loginSchema.parse(req.body);
 
     const user = await prisma.user.findUnique({
-      where: { name: username },
+      where: {username: username },
       select: {
         id: true,
-        name: true,
+       username: true,
         password: true
       }
     });
@@ -62,7 +62,7 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     const { username, password } = loginSchema.parse(req.body);
 
     const existingUser = await prisma.user.findUnique({
-      where: { name: username }
+      where: {username: username }
     });
 
     if (existingUser) {
@@ -76,7 +76,7 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     // Create new user with hashed password
     const newUser = await prisma.user.create({
       data: {
-        name: username,
+       username: username,
         password: hashedPassword
       },
     });
