@@ -1,12 +1,18 @@
 import session from 'express-session';
 import { SessionOptions } from 'express-session';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const sessionOptions: SessionOptions = {
-  secret: 'f4z4gs$Gcg',
-  cookie: { maxAge: 300000000, secure: true, sameSite: 'none' },
-  saveUninitialized: false,
+  secret: 'your-secret-key',
   resave: false,
-   // Add your store configuration
-};
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}
 
 export default session(sessionOptions);

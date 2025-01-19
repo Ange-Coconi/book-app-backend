@@ -17,7 +17,7 @@ datasource db {
 model User {
   id          Int       @id @default(autoincrement())
   username        String    @unique
-  password    String    @unique
+  password    String    
   email       String?    @unique
   books       Book[]
   folders     Folder[]
@@ -31,7 +31,7 @@ model Folder {
   parentFolderId Int?
   subfolders   Folder[]  @relation("Subfolders")
   user         User      @relation(fields: [userId], references: [id])
-  userId       Int       @unique
+  userId       Int       
   books        Book[]
 }
 
@@ -41,15 +41,15 @@ model Book {
   folder  Folder @relation(fields: [folderId], references: [id])
   folderId Int
   user    User    @relation(fields: [userId], references: [id])
-  userId  Int     @unique
+  userId  Int     
   pages   Page[]
 }
 
 model Page {
   id      Int    @id @default(autoincrement())
   name    String?
-  index   Int    @unique
+  index   Int    
   content String?
   book    Book   @relation(fields: [bookId], references: [id])
-  bookId  Int    @unique
+  bookId  Int    
 }

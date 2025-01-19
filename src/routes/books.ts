@@ -1,12 +1,13 @@
 import { Router, Request, Response } from 'express';
-import isLoggedIn from '@/middleware/ensure-authentification';
-import prisma from '@/db/index';
-import { isPageArray } from '@/types/page-model';
+import isLoggedIn from '../middleware/isLoggedIn';
+import prisma from '../db/index';
+import { isPageArray } from '../helper/page-model';
+import { validateSession } from '../middleware/sessionValidator';
 
 const router = Router();
 
 // for dashboard
-router.get('/books/dashboard', isLoggedIn, async (req: Request, res: Response) => { 
+router.get('/books/dashboard', isLoggedIn, validateSession, async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   try { 
     const books = await prisma.$queryRaw` 
@@ -24,7 +25,7 @@ router.get('/books/dashboard', isLoggedIn, async (req: Request, res: Response) =
 });
 
 // getting bibliothek for visualize page
-router.get('/bibliothek', isLoggedIn, async (req: Request, res: Response) => { 
+router.get('/bibliothek', isLoggedIn, validateSession, async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   try { 
     const bibliothek = await prisma.folder.findMany({ 
@@ -45,7 +46,7 @@ router.get('/bibliothek', isLoggedIn, async (req: Request, res: Response) => {
 });
 
 // fetch one book and its pages
-router.get('/books/:id', isLoggedIn, async (req: Request, res: Response) => { 
+router.get('/books/:id', isLoggedIn, validateSession, async (req: Request, res: Response) => { 
   const bookId = parseInt(req.params.id)
   try { 
     const book = await prisma.book.findMany({ 
@@ -64,7 +65,7 @@ router.get('/books/:id', isLoggedIn, async (req: Request, res: Response) => {
 });
 
 // getting a folder and its sub-item
-router.get('/folders/:id', isLoggedIn, async (req: Request, res: Response) => { 
+router.get('/folders/:id', isLoggedIn, validateSession, async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   const folderId = parseInt(req.params.id);
   try { 
@@ -85,8 +86,10 @@ router.get('/folders/:id', isLoggedIn, async (req: Request, res: Response) => {
 });
 
 // create a folder
-router.post('/folders', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.post('/folders', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
+  if (userId === 1) return
+
   const { name, parentFolderId } = req.body;
 
   if (!userId || !name || !parentFolderId) {
@@ -110,8 +113,9 @@ router.post('/folders', isLoggedIn, async (req: Request, res: Response): Promise
 });
 
 // create a book
-router.post('/books', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.post('/books', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
+  if (userId === 1) return
   const { title, folderId } = req.body;
 
   if (!userId || !title || !folderId) {
@@ -142,8 +146,9 @@ router.post('/books', isLoggedIn, async (req: Request, res: Response): Promise<a
 });
 
 // delete a folder
-router.delete('/folders/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.delete('/folders/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
+  if (userId === 1) return
   const folderId = parseInt(req.params.id);
 
   try { 
@@ -190,7 +195,9 @@ router.delete('/folders/:id', isLoggedIn, async (req: Request, res: Response): P
 });
 
 // delete a book
-router.delete('/books/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.delete('/books/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
+  const userId = req.session.userId;
+  if (userId === 1) return
   const bookId = parseInt(req.params.id);
 
   try { 
@@ -213,7 +220,9 @@ router.delete('/books/:id', isLoggedIn, async (req: Request, res: Response): Pro
 });
 
 // update a book
-router.put('/books/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.put('/books/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
+  const userId = req.session.userId;
+  if (userId === 1) return
   const bookId = parseInt(req.params.id);
   const { pages } = req.body; 
   

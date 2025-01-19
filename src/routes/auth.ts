@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import prisma from '@/db/index';
-import { prepopulate } from '@/helper/prepopulate';
+import prisma from '../db/index';
+import { prepopulate } from '../helper/prepopulate';
 
 const router = Router();
 

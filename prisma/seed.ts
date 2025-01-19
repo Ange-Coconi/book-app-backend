@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv'; dotenv.config();
-import prisma from '../src/db/index';
+import prisma from '../src/db/index'; 
+import dotenv from 'dotenv';
+import { prepopulate } from '../src/helper/prepopulate';
+
+dotenv.config();
+
 
 async function main() {
   // Create user 0 (yourself)
@@ -18,7 +22,7 @@ async function main() {
 
   // Create user 1 (unauthenticated user)
   const hashedPassword1 = await bcrypt.hash('guest_password', 10);
-  await prisma.user.upsert({
+  const user_1 = await prisma.user.upsert({
     where: { id: 1 },
     update: {},
     create: {
@@ -27,6 +31,8 @@ async function main() {
       password: hashedPassword1,
     },
   });
+
+  prepopulate(user_1.id)
 }
 
 main()

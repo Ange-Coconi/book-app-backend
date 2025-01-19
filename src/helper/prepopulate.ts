@@ -1,4 +1,4 @@
-import prisma from '@/db/index';
+import prisma from '../db/index';
 
 export async function prepopulate(userId: number) {
     try { 
