@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import prisma from '@/db/index';
+import { prepopulate } from '@/helper/prepopulate';
 
 const router = Router();
 
@@ -79,6 +80,8 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
         password: hashedPassword
       },
     });
+
+    await prepopulate(newUser.id)
     
     return res.redirect('/login');
 

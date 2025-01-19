@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import isLoggedIn from '@/middleware/ensure-authentification';
 import prisma from '@/db/index';
+import { isPageArray } from '@/types/page-model';
 
 const router = Router();
 
@@ -45,7 +46,7 @@ router.get('/bibliothek', isLoggedIn, async (req: Request, res: Response) => {
 
 // fetch one book and its pages
 router.get('/books/:id', isLoggedIn, async (req: Request, res: Response) => { 
-  const bookId = Number(req.params.id)
+  const bookId = parseInt(req.params.id)
   try { 
     const book = await prisma.book.findMany({ 
       where: { 
@@ -65,7 +66,7 @@ router.get('/books/:id', isLoggedIn, async (req: Request, res: Response) => {
 // getting a folder and its sub-item
 router.get('/folders/:id', isLoggedIn, async (req: Request, res: Response) => { 
   const userId = req.session.userId;
-  const folderId = Number(req.params.id);
+  const folderId = parseInt(req.params.id);
   try { 
     const folder = await prisma.folder.findMany({ 
       where: { 
@@ -126,7 +127,7 @@ router.post('/books', isLoggedIn, async (req: Request, res: Response): Promise<a
       }
       });
     for (let i = 0; i < 5 ; i++) {
-      const newPages = await prisma.page.create({
+      await prisma.page.create({
         data: {
           bookId: book.id,
           index: i,
@@ -141,24 +142,106 @@ router.post('/books', isLoggedIn, async (req: Request, res: Response): Promise<a
 });
 
 // delete a folder
-router.post('/folders', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+router.delete('/folders/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  const { name, parentFolderId } = req.body;
-
-  if (!userId || !name || !parentFolderId) {
-    return res.status(403).json({ message: 'information missing' });
-  }
+  const folderId = parseInt(req.params.id);
 
   try { 
-    const folder = await prisma.folder.create({ 
-      data: {
-        name: name,
-        parentFolderId: parentFolderId,
-        userId: userId
+    const booksInFolder = await prisma.book.findMany({ 
+      where: { 
+        folderId: folderId, 
+      }, 
+      select: { 
+        id: true, 
+      }, 
+    }); 
+    const bookIds = booksInFolder.map(book => book.id); 
+    await prisma.page.deleteMany({ 
+      where: { 
+        bookId: { 
+          in: bookIds, 
+        }, 
+      }, 
+    });
+
+    await prisma.book.deleteMany({ 
+      where: {
+        folderId: folderId
+      }
+    });
+
+    await prisma.folder.deleteMany({ 
+      where: {
+        parentFolderId: folderId
+      }
+    });
+
+    await prisma.folder.delete({ 
+      where: {
+        id: folderId
       }
       });
 
-    res.status(201).json(folder);
+    res.status(204).json();
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ message: 'Internal server error' }); 
+  } 
+});
+
+// delete a book
+router.delete('/books/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+  const bookId = parseInt(req.params.id);
+
+  try { 
+    await prisma.page.deleteMany({
+      where: {
+          bookId: bookId
+      }
+    });
+    await prisma.book.delete({
+      where: {
+          id: bookId
+      }
+    });
+
+    res.status(204).json();
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ message: 'Internal server error' }); 
+  } 
+});
+
+// update a book
+router.put('/books/:id', isLoggedIn, async (req: Request, res: Response): Promise<any> => { 
+  const bookId = parseInt(req.params.id);
+  const { pages } = req.body; 
+  
+  if (!pages || !Array.isArray(pages) || !isPageArray(pages)) { 
+    return res.status(400).json({ message: 'Invalid pages data' }); 
+  } 
+  
+  try { 
+    await Promise.all(pages.map(async (page) => { 
+      return prisma.page.upsert({ 
+        where: { 
+          bookId: bookId, 
+          index: page.index, 
+        }, 
+        update: { 
+          name: page.name, 
+          content: page.content, 
+        }, 
+        create: { 
+          name: page.name, 
+          index: page.index, 
+          content: page.content, 
+          bookId: bookId,
+        }, 
+      }); 
+    }) 
+  );
+    res.status(204).json();
   } catch (error) { 
     console.error(error); 
     res.status(500).json({ message: 'Internal server error' }); 

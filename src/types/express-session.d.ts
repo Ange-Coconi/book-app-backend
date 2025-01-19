@@ -2,7 +2,7 @@ import 'express-session';
 
 declare module 'express-session' {
   interface SessionData {
-    views: number,
+    views: number;
     authenticated: boolean;
     userId: number;
     user: {
