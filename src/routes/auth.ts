@@ -12,6 +12,12 @@ const loginSchema = z.object({
   password: z.string().min(1)
 });
 
+const loginSchema2 = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+  email: z.string().min(1)
+});
+
 router.post('/login', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
@@ -59,7 +65,7 @@ router.post('/login', async (req: Request,res: Response,next: NextFunction): Pro
 router.post('/signin', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
-    const { username, password } = loginSchema.parse(req.body);
+    const { username, password, email } = loginSchema2.parse(req.body);
 
     const existingUser = await prisma.user.findUnique({
       where: {username: username }
@@ -69,6 +75,14 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
       return res.status(400).json({ msg: 'Username already taken' });
     }
 
+    const existingEmail = await prisma.user.findUnique({
+      where: {email: email }
+    });
+
+    if (existingEmail) {
+      return res.status(400).json({ msg: 'Email already registered' });
+    }
+
     // Hash password before storing
     const saltRounds = 10; // recommended value
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -76,8 +90,9 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     // Create new user with hashed password
     const newUser = await prisma.user.create({
       data: {
-       username: username,
-        password: hashedPassword
+        username: username,
+        password: hashedPassword,
+        email: email
       },
     });
 
