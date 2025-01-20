@@ -11,12 +11,13 @@ router.get('/books/dashboard', isLoggedIn, validateSession, async (req: Request,
   const userId = req.session.userId;
   try { 
     const books = await prisma.$queryRaw` 
-    SELECT "Book".*, COUNT("Page"."id") as "pageCount" 
+    SELECT "Book".*
     FROM "Book" 
     LEFT JOIN "Page" ON "Book"."id" = "Page"."bookId" 
     WHERE "Book"."userId" = ${userId}
     GROUP BY "Book"."id" 
-    ORDER BY "pageCount" DESC LIMIT 6; `; 
+    ORDER BY COUNT("Page"."id") DESC LIMIT 6; `; 
+    console.log(books);
     res.status(200).json(books); 
   } catch (error) { 
     console.error(error); 
@@ -234,6 +235,7 @@ router.put('/books/:id', isLoggedIn, validateSession, async (req: Request, res: 
     await Promise.all(pages.map(async (page) => { 
       return prisma.page.upsert({ 
         where: { 
+          id: page.id,
           bookId: bookId, 
           index: page.index, 
         }, 
