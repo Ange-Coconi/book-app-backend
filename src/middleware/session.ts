@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const sessionOptions: SessionOptions = {
-  secret: 'your-secret-key',
+  secret: 'eS9JK6&cTPs8jY@8Rw!4',
   resave: false,
   saveUninitialized: false,
   cookie: {

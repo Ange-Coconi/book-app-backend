@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import prisma from '../db/index';
 import { prepopulate } from '../helper/prepopulate';
+import corsFunction from '../middleware/cors';
 
 const router = Router();
 
@@ -13,12 +14,12 @@ const loginSchema = z.object({
 });
 
 const loginSchema2 = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
-  email: z.string().min(1)
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password must be at least 1 characters"),
+  email: z.string().email("Invalid email address")
 });
 
-router.post('/login', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/login', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
     const { username, password } = loginSchema.parse(req.body);
@@ -28,7 +29,8 @@ router.post('/login', async (req: Request,res: Response,next: NextFunction): Pro
       select: {
         id: true,
        username: true,
-        password: true
+        password: true,
+        email: true,
       }
     });
 
@@ -48,7 +50,8 @@ router.post('/login', async (req: Request,res: Response,next: NextFunction): Pro
     req.session.authenticated = true;
     req.session.userId = user.id;  // Only store the ID
     
-    return res.redirect('/dashboard');
+    res.status(200).json({id: user.id, username: user.username, email: user.email})
+    return
 
   } catch (err) {
     // Don't expose error details to client
@@ -62,10 +65,11 @@ router.post('/login', async (req: Request,res: Response,next: NextFunction): Pro
   }
 });
 
-router.post('/signin', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/signin', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
     const { username, password, email } = loginSchema2.parse(req.body);
+    
 
     const existingUser = await prisma.user.findUnique({
       where: {username: username }
@@ -87,6 +91,7 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     const saltRounds = 10; // recommended value
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    
     // Create new user with hashed password
     const newUser = await prisma.user.create({
       data: {
@@ -97,8 +102,8 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     });
 
     await prepopulate(newUser.id)
-    
-    return res.redirect('/login');
+
+    res.status(200).json()
 
   } catch (err) {
     // Don't expose error details to client
@@ -110,6 +115,18 @@ router.post('/signin', async (req: Request,res: Response,next: NextFunction): Pr
     
     return res.status(500).json({ msg: 'Internal server error' });
   }
+});
+
+router.post('/logout', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).send('Could not log out.');
+    }
+    // Optionally, clear the cookie on the client side
+    res.clearCookie('connect.sid'); // Default cookie name for express-session
+    res.status(200).json(); // Redirect to the login page or another route
+  });
 });
 
 export default router;

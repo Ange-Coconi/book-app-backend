@@ -17,7 +17,6 @@ router.get('/books/dashboard', isLoggedIn, validateSession, async (req: Request,
     WHERE "Book"."userId" = ${userId}
     GROUP BY "Book"."id" 
     ORDER BY COUNT("Page"."id") DESC LIMIT 6; `; 
-    console.log(books);
     res.status(200).json(books); 
   } catch (error) { 
     console.error(error); 
