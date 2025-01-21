@@ -14,6 +14,8 @@ export async function prepopulate(userId: number) {
             return prisma.book.create({ 
                 data: {
                     title: book.title,
+                    format: book.size,
+                    padding: book.size,
                     folderId: rootFolder.id,
                     userId: userId
                 }
@@ -41,6 +43,7 @@ export async function prepopulate(userId: number) {
 const startingLibrary = [
     {
       "title": "Adventure Journey",
+      "size": "small",
       "pages": [
         "In the heart of the bustling city, a young adventurer named Alex set out on an unexpected journey. The tall skyscrapers cast long shadows, creating a maze of light and darkness. Alex's heart pounded with excitement as they navigated through the crowded streets, each step taking them closer to the unknown. The city was alive with the hum of vehicles and the chatter of people, a symphony of urban life. The journey had just begun, and Alex knew that this adventure would be unlike any other.",
         "As Alex ventured further into the city, they stumbled upon an old, mysterious bookstore. The wooden sign creaked in the wind, and the scent of aged paper wafted through the air. Curiosity piqued, Alex pushed open the door, and the tinkling of a bell announced their arrival. The interior was dimly lit, with towering shelves filled with books of every genre imaginable. An elderly shopkeeper greeted Alex with a knowing smile, as if they had been expecting this very moment. Without hesitation, Alex began to explore the aisles, each book a potential key to untold secrets.",
@@ -51,6 +54,7 @@ const startingLibrary = [
     },
     {
       "title": "Mystic Quest",
+      "size": "medium",
       "pages": [
         "In a tranquil village nestled at the edge of an ancient forest, a young seeker named Elara embarked on a quest shrouded in mystery. The villagers whispered tales of a hidden temple deep within the woods, a place said to hold the secrets of the universe. Elara, driven by an insatiable curiosity, decided to unravel the enigma. The path ahead was laden with overgrown foliage, and the air was thick with the scent of pine and earth. With each step, the forest seemed to come alive, its ancient energy guiding Elara toward her destination.",
         "Elara's journey took her through winding trails and past ancient trees whose roots intertwined like the hands of old friends. Along the way, she encountered mystical creatures and heard the songs of unseen birds. The forest was a realm of enchantment, where time seemed to stand still. One evening, as the sun dipped below the horizon, Elara stumbled upon a glistening river. Its waters sparkled in the twilight, and she felt an inexplicable urge to follow its course. The river's gentle flow led her to a clearing bathed in moonlight, and there, at its center, stood a weathered stone altar.",
@@ -61,6 +65,7 @@ const startingLibrary = [
     },
     {
       "title": "Celestial Odyssey",
+      "size": "big",
       "pages": [
         "High above the Earth, in the boundless expanse of space, a daring astronaut named Orion embarked on a celestial odyssey. The vastness of the cosmos stretched out before him, a sea of stars and distant galaxies. Equipped with the latest technology and a spirit of exploration, Orion's mission was to uncover the mysteries of the universe. His spacecraft, the 'Stellar Voyager,' glided silently through the void, its instruments humming with life. As Orion gazed out of the observation window, he marveled at the beauty of the cosmos, feeling a deep connection to the stars that had guided humanity for millennia.",
         "Orion's journey led him to the edge of a shimmering nebula, a cloud of gas and dust that glowed with vibrant colors. The nebula's ethereal beauty was mesmerizing, and Orion couldn't resist the urge to venture closer. As the Stellar Voyager approached, the ship's sensors detected strange energy readings. Intrigued, Orion decided to investigate further. He donned his spacesuit and prepared for a spacewalk, the nebula's luminescent tendrils beckoning him forward. Stepping out into the void, Orion felt a profound sense of awe as he floated among the stars, the nebula's energy enveloping him like a cosmic embrace.",

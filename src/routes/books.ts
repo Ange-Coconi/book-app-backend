@@ -88,7 +88,7 @@ router.get('/folders/:id', isLoggedIn, validateSession, async (req: Request, res
 // create a folder
 router.post('/folders', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  if (userId === 1) return
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
 
   const { name, parentFolderId } = req.body;
 
@@ -115,8 +115,8 @@ router.post('/folders', isLoggedIn, validateSession, async (req: Request, res: R
 // create a book
 router.post('/books', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  if (userId === 1) return
-  const { title, folderId } = req.body;
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
+  const { title, format, padding, folderId } = req.body;
 
   if (!userId || !title || !folderId) {
     return res.status(403).json({ message: 'information missing' });
@@ -126,6 +126,8 @@ router.post('/books', isLoggedIn, validateSession, async (req: Request, res: Res
     const book = await prisma.book.create({ 
       data: {
         title: title,
+        format: format,
+        padding: padding,
         folderId: folderId,
         userId: userId
       }
@@ -148,7 +150,7 @@ router.post('/books', isLoggedIn, validateSession, async (req: Request, res: Res
 // delete a folder
 router.delete('/folders/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  if (userId === 1) return
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const folderId = parseInt(req.params.id);
 
   try { 
@@ -197,7 +199,7 @@ router.delete('/folders/:id', isLoggedIn, validateSession, async (req: Request, 
 // delete a book
 router.delete('/books/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  if (userId === 1) return
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const bookId = parseInt(req.params.id);
 
   try { 
@@ -222,7 +224,7 @@ router.delete('/books/:id', isLoggedIn, validateSession, async (req: Request, re
 // update a book
 router.put('/books/:id', isLoggedIn, validateSession, async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
-  if (userId === 1) return
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const bookId = parseInt(req.params.id);
   const { pages } = req.body; 
   
