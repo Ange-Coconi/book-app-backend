@@ -54,7 +54,11 @@ router.get('/books/:id', isLoggedIn, validateSession, async (req: Request, res: 
         id: bookId 
       }, 
       include: { 
-        pages: true 
+        pages: { 
+          orderBy: { 
+            index: 'asc' 
+          } 
+        } 
       }
     });
     res.status(200).json(book);
