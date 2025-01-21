@@ -7,6 +7,7 @@ export interface Page {
 }
 
 export function isPageArray(pages: any[]): pages is Page[] { 
+    console.log(pages)
     return pages.every(page => 
         typeof page.id === 'number' &&
         typeof page.name === 'string' && 

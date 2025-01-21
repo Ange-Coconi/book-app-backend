@@ -7,8 +7,6 @@ import { validateSession  } from './middleware/sessionValidator';
 import corsFunction from './middleware/cors';
 import isLoggedIn from './middleware/isLoggedIn';
 
-
-
 const app = express();
 
 app.set('trust proxy', 1); 
@@ -24,7 +22,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(sessionMiddleware); // Use session middleware
 
 app.use('/auth', corsFunction, authRouter); // Use authentication routes
-app.use('/api', isLoggedIn, booksRouter); 
+app.use('/api', validateSession, isLoggedIn, booksRouter); 
 
 
 app.listen(3000, () => {

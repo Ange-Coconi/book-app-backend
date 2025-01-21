@@ -49,9 +49,8 @@ model Book {
 
 model Page {
   id      Int    @id @default(autoincrement())
-  name    String?
   index   Int    
-  content String?
+  content String  @default("")
   book    Book   @relation(fields: [bookId], references: [id])
   bookId  Int    
 }

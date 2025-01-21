@@ -231,6 +231,8 @@ router.put('/books/:id', async (req: Request, res: Response): Promise<any> => {
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const bookId = parseInt(req.params.id);
   const { pages } = req.body; 
+  console.log(pages);
+  console.log(Array.isArray(pages))
   
   if (!pages || !Array.isArray(pages) || !isPageArray(pages)) { 
     return res.status(400).json({ message: 'Invalid pages data' }); 
