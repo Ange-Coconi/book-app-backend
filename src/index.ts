@@ -5,21 +5,26 @@ import booksRouter from './routes/books';
 import authRouter from './routes/auth';
 import { validateSession  } from './middleware/sessionValidator'; 
 import corsFunction from './middleware/cors';
+import isLoggedIn from './middleware/isLoggedIn';
+
 
 
 const app = express();
 
 app.set('trust proxy', 1); 
-app.use(cors()); app.use(express.json()); 
+app.use(sessionMiddleware); // Use session middleware
+app.use(cors({
+  origin: 'http://localhost:4200', // Replace with your frontend URL
+  credentials: true, // Allow cookies to be sent
+})); 
+app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.set('view engine', 'ejs'); 
 app.use(express.static(__dirname + '/public')); 
 app.use(sessionMiddleware); // Use session middleware
-app.use(validateSession); 
-app.use(corsFunction);
 
-app.use('/auth', authRouter); // Use authentication routes
-app.use('/api', booksRouter); 
+app.use('/auth', corsFunction, authRouter); // Use authentication routes
+app.use('/api', isLoggedIn, booksRouter); 
 
 
 app.listen(3000, () => {
