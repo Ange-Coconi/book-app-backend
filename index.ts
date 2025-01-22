@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import sessionMiddleware from './middleware/session'; 
-import booksRouter from './routes/books'; 
-import authRouter from './routes/auth';
-import { validateSession  } from './middleware/sessionValidator'; 
-import { corsOptions } from './middleware/cors';
-import isLoggedIn from './middleware/isLoggedIn';
+import sessionMiddleware from './src/middleware/session'; 
+import booksRouter from './src/routes/books'; 
+import authRouter from './src/routes/auth';
+import { validateSession  } from './src/middleware/sessionValidator'; 
+import { corsOptions } from './src/middleware/cors';
+import isLoggedIn from './src/middleware/isLoggedIn';
 import dotenv from 'dotenv';
 
 dotenv.config();

@@ -16,7 +16,7 @@
       "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
       "typeRoots": ["./node_modules/@types", "./types"],
     },
-    "include": ["src", "types", "src/index.ts"],                        // Include all files in the src directory
+    "include": ["src", "types", "index.ts"],                        // Include all files in the src directory
     "exclude": ["node_modules", "**/*.spec.ts"] // Exclude node_modules and test files
   }
   
