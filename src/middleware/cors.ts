@@ -6,4 +6,13 @@ function corsFunction(req: Request, res: Response, next: NextFunction) {
     next();
   }
 
-  export default corsFunction;
+
+export const corsOptions = {
+    origin: 'https://write-and-visualize-book.netlify.app',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow methods
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'], // Explicitly allow headers
+  };
+
+
+export default corsFunction;
