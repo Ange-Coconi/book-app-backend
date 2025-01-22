@@ -136,9 +136,11 @@ router.post('/contact', corsFunction, async (req: Request,res: Response,next: Ne
     return res.status(400).json({ message: 'Request body is empty' }) 
   };
 
-  const { firstName, lastName, email, reason, message } = req.body;
+  console.log(req.body)
 
-  if (!email || !message || !firstName || !lastName || !reason) {
+  const { firstname, lastname, email, reason, message } = req.body;
+
+  if (!email || !message || !firstname || !lastname || !reason) {
     return res.status(400).json({ message: 'Missing required fields' })
 }
 
@@ -158,7 +160,7 @@ router.post('/contact', corsFunction, async (req: Request,res: Response,next: Ne
     subject: `New Contact Message - ${reason}`,
     html: `
       <h3>New Contact Message</h3>
-      <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+      <p><strong>Name:</strong> ${firstname} ${lastname}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Reason:</strong> ${reason}</p>
       <p><strong>Message:</strong> ${message}</p>
