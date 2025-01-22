@@ -9,7 +9,8 @@ dotenv.config();
 let redisClient = createClient({
   url: process.env.REDIS_URL,
   socket: {
-    reconnectStrategy: (retries) => Math.min(retries * 50, 1000)
+    tls: true,
+    rejectUnauthorized: false // This allows self-signed certificates
   }
 });
 
