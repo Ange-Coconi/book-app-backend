@@ -3,7 +3,7 @@ import { RedisStore } from "connect-redis";
 import session from 'express-session';
 import { createClient } from 'redis';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config(); 
 
 
 let redisClient = createClient({
