@@ -178,6 +178,14 @@ router.post('/books/upload', async (req: Request, res: Response): Promise<any> =
         }
       })
     };
+    if (dataUpload.length < 2) {
+      await prisma.page.create({
+        data: {
+          bookId: book.id,
+          index: 0,
+        }
+      })
+    }
     
     res.status(201).json(book);
   } catch (error) { 
