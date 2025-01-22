@@ -120,7 +120,7 @@ router.post('/books', async (req: Request, res: Response): Promise<any> => {
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const { title, format, padding, folderId } = req.body;
 
-  if (!userId || !title || !folderId) {
+  if (!userId || !title || !folderId || !padding) {
     return res.status(403).json({ message: 'information missing' });
   }
 
@@ -142,6 +142,43 @@ router.post('/books', async (req: Request, res: Response): Promise<any> => {
         }
       })
     }
+    res.status(201).json(book);
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ message: 'Internal server error' }); 
+  } 
+});
+
+// create a book uploaded (ok)
+router.post('/books/upload', async (req: Request, res: Response): Promise<any> => { 
+  const userId = req.session.userId;
+  if (userId === 1) return res.status(401).json({ message: 'user is not login' })
+  const { dataUpload, format, padding, folderId } = req.body;
+
+  if (!userId || !dataUpload || !folderId || !padding) {
+    return res.status(403).json({ message: 'information missing' });
+  }
+
+  try { 
+    const book = await prisma.book.create({ 
+      data: {
+        title: dataUpload[0],
+        format: format,
+        padding: padding,
+        folderId: folderId,
+        userId: userId
+      }
+      });
+    for (let i = 1; i < dataUpload.length ; i++) {
+      await prisma.page.create({
+        data: {
+          bookId: book.id,
+          index: i - 1,
+          content: dataUpload[i]
+        }
+      })
+    };
+    
     res.status(201).json(book);
   } catch (error) { 
     console.error(error); 
