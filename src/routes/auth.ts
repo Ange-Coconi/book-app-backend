@@ -4,6 +4,7 @@ import { z } from 'zod';
 import prisma from '../db/index';
 import { prepopulate } from '../helper/prepopulate';
 import corsFunction from '../middleware/cors';
+import nodemailer from 'nodemailer';
 
 const router = Router();
 
@@ -129,4 +130,58 @@ router.post('/logout', corsFunction, async (req: Request,res: Response,next: Nex
   });
 });
 
+router.post('/contact', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+
+  if (!req.body) { 
+    return res.status(400).json({ message: 'Request body is empty' }) 
+  };
+
+  const { firstName, lastName, email, reason, message } = req.body;
+
+  if (!email || !message || !firstName || !lastName || !reason) {
+    return res.status(400).json({ message: 'Missing required fields' })
+}
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.mailersend.net',
+    port: 587, // Use 465 for SSL, 587 for TLS
+    secure: false, // Use true for port 465
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: process.env.EMAIL_TO,
+    subject: `New Contact Message - ${reason}`,
+    html: `
+      <h3>New Contact Message</h3>
+      <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Reason:</strong> ${reason}</p>
+      <p><strong>Message:</strong> ${message}</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Email sent successfully' });
+    return
+
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(200).json({ message: 'Error sending email' });
+    return 
+  }
+});
+
 export default router;
+
+
+
+
+
+  
+
