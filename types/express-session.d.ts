@@ -14,5 +14,7 @@ const SessionSchema = z.object({
 export type ValidSession = z.infer<typeof SessionSchema>;
 
 declare module 'express-session' {
-  interface Session extends ValidSession {}
+  interface Session extends ValidSession {
+
+  }
 }

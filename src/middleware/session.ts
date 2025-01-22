@@ -7,11 +7,19 @@ dotenv.config();
 
 
 let redisClient = createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
+  socket: {
+    reconnectStrategy: (retries) => Math.min(retries * 50, 1000)
+  }
 });
 
-redisClient.connect().catch(console.error);
+// Add event listeners for Redis connection
+redisClient.on('error', (err) => console.error('Redis Client Error:', err));
+redisClient.on('connect', () => console.log('Redis Client Connected'));
 
+redisClient.connect().catch((err) => {
+  console.error('Redis Connection Error:', err);
+});
 // Initialize store.
 let redisStore = new RedisStore({
   client: redisClient,
@@ -27,7 +35,7 @@ const sessionOptions: SessionOptions = {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: false
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }
 
