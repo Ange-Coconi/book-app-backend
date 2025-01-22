@@ -12,7 +12,7 @@ const app = express();
 app.set('trust proxy', 1); 
 app.use(sessionMiddleware); // Use session middleware
 app.use(cors({
-  origin: 'http://localhost:4200', // Replace with your frontend URL
+  origin: 'https://write-and-visualize-book.netlify.app', // Replace with your frontend URL
   credentials: true, // Allow cookies to be sent
 })); 
 app.use(express.json()); 
