@@ -119,6 +119,10 @@ router.post('/books', async (req: Request, res: Response): Promise<any> => {
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const { title, format, padding, folderId } = req.body;
+  console.log(userId)
+  console.log(title)
+  console.log(folderId)
+  console.log(padding)
 
   if (typeof userId !== 'number' || !title || !folderId || !padding) {
     return res.status(403).json({ message: 'information missing' });
