@@ -10,8 +10,10 @@ import isLoggedIn from './middleware/isLoggedIn';
 const app = express();
 
 app.set('trust proxy', 1); 
-app.use(sessionMiddleware); // Use session middleware
+
 app.use(cors(corsOptions)); 
+app.use(sessionMiddleware); // Use session middleware
+
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.set('view engine', 'ejs'); 
