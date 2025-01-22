@@ -1,12 +1,10 @@
 import { Router, Request, Response } from 'express';
-import isLoggedIn from '../middleware/isLoggedIn';
 import prisma from '../db/index';
 import { isPageArray } from '../helper/page-model';
-import { validateSession } from '../middleware/sessionValidator';
 
 const router = Router();
 
-// for dashboard
+// for dashboard (ok)
 router.get('/books/dashboard', async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   try { 
@@ -24,7 +22,7 @@ router.get('/books/dashboard', async (req: Request, res: Response) => {
   } 
 });
 
-// getting bibliothek for visualize page
+// getting bibliothek for visualize page (ok)
 router.get('/bibliothek', async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   try { 
@@ -45,7 +43,7 @@ router.get('/bibliothek', async (req: Request, res: Response) => {
   } 
 });
 
-// fetch one book and its pages
+// fetch one book and its pages (ok)
 router.get('/books/:id', async (req: Request, res: Response) => { 
   const bookId = parseInt(req.params.id)
   try { 
@@ -68,7 +66,7 @@ router.get('/books/:id', async (req: Request, res: Response) => {
   } 
 });
 
-// getting a folder and its sub-item
+// getting a folder and its sub-item (ok)
 router.get('/folders/:id', async (req: Request, res: Response) => { 
   const userId = req.session.userId;
   const folderId = parseInt(req.params.id);
@@ -89,7 +87,7 @@ router.get('/folders/:id', async (req: Request, res: Response) => {
   } 
 });
 
-// create a folder
+// create a folder (ok)
 router.post('/folders', async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
@@ -116,7 +114,7 @@ router.post('/folders', async (req: Request, res: Response): Promise<any> => {
   } 
 });
 
-// create a book
+// create a book (ok)
 router.post('/books', async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
@@ -151,7 +149,7 @@ router.post('/books', async (req: Request, res: Response): Promise<any> => {
   } 
 });
 
-// delete a folder
+// delete a folder (ok)
 router.delete('/folders/:id', async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
@@ -200,12 +198,12 @@ router.delete('/folders/:id', async (req: Request, res: Response): Promise<any> 
   } 
 });
 
-// delete a book
+// delete a book (ok)
 router.delete('/books/:id', async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const bookId = parseInt(req.params.id);
-
+  console.log(bookId)
   try { 
     await prisma.page.deleteMany({
       where: {
@@ -225,7 +223,7 @@ router.delete('/books/:id', async (req: Request, res: Response): Promise<any> =>
   } 
 });
 
-// update a book
+// update a book (ok)
 router.put('/books/:id', async (req: Request, res: Response): Promise<any> => { 
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
@@ -247,11 +245,9 @@ router.put('/books/:id', async (req: Request, res: Response): Promise<any> => {
           index: page.index, 
         }, 
         update: { 
-          name: page.name, 
           content: page.content, 
         }, 
         create: { 
-          name: page.name, 
           index: page.index, 
           content: page.content, 
           bookId: bookId,
