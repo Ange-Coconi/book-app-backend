@@ -11,7 +11,7 @@ const app = express();
 
 app.set('trust proxy', 1); 
 
-app.use(cors(corsOptions)); 
+app.use(cors()); 
 app.use(sessionMiddleware); // Use session middleware
 
 app.use(express.json()); 
