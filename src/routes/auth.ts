@@ -37,14 +37,14 @@ router.post('/login', corsFunction, async (req: Request,res: Response,next: Next
 
     if (!user) {
       // Use same message to prevent username enumeration
-      return res.status(401).json({ msg: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Compare passwords using bcrypt
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ msg: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Set session data (avoid storing sensitive info)
@@ -59,10 +59,10 @@ router.post('/login', corsFunction, async (req: Request,res: Response,next: Next
     console.error('Login error:', err);
     
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ msg: 'Invalid input' });
+      return res.status(400).json({ message: 'Invalid input' });
     }
     
-    return res.status(500).json({ msg: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
 
@@ -77,7 +77,7 @@ router.post('/signin', corsFunction, async (req: Request,res: Response,next: Nex
     });
 
     if (existingUser) {
-      return res.status(400).json({ msg: 'Username already taken' });
+      return res.status(400).json({ message: 'Username already taken' });
     }
 
     const existingEmail = await prisma.user.findUnique({
@@ -85,7 +85,7 @@ router.post('/signin', corsFunction, async (req: Request,res: Response,next: Nex
     });
 
     if (existingEmail) {
-      return res.status(400).json({ msg: 'Email already registered' });
+      return res.status(400).json({ message: 'Email already registered' });
     }
 
     // Hash password before storing
@@ -111,10 +111,10 @@ router.post('/signin', corsFunction, async (req: Request,res: Response,next: Nex
     console.error('Signin error:', err);
     
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ msg: 'Invalid input' });
+      return res.status(400).json({ message: 'Invalid input' });
     }
     
-    return res.status(500).json({ msg: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
 
