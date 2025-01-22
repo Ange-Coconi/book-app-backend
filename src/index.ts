@@ -21,8 +21,8 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public')); 
 app.use(sessionMiddleware); // Use session middleware
 
-app.use('/auth', corsFunction, authRouter); // Use authentication routes
-app.use('/api', corsFunction, validateSession, isLoggedIn, booksRouter); 
+app.use('/auth', authRouter); // Use authentication routes
+app.use('/api', validateSession, isLoggedIn, booksRouter); 
 
 
 app.listen(3000, () => {
