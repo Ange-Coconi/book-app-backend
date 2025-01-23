@@ -20,7 +20,7 @@ const loginSchema2 = z.object({
   email: z.string().email("Invalid email address")
 });
 
-router.post('/login', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/login', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
     const { username, password } = loginSchema.parse(req.body);
@@ -66,7 +66,7 @@ router.post('/login', corsFunction, async (req: Request,res: Response,next: Next
   }
 });
 
-router.post('/signin', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/signin', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   try {
     // Validate input
     const { username, password, email } = loginSchema2.parse(req.body);
@@ -118,7 +118,7 @@ router.post('/signin', corsFunction, async (req: Request,res: Response,next: Nex
   }
 });
 
-router.post('/logout', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/logout', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   req.session.destroy((err) => {
     if (err) {
       console.error('Error destroying session:', err);
@@ -130,7 +130,35 @@ router.post('/logout', corsFunction, async (req: Request,res: Response,next: Nex
   });
 });
 
-router.post('/contact', corsFunction, async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+router.post('/active-session', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
+  const userId = req.session.userId;
+
+  if (userId === 1) {
+    return res.status(401).json(null);
+
+  } 
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+       username: true,
+        email: true,
+      }
+    });
+
+    return res.status(200).json(user);
+
+  } catch (error) {
+    console.error('Error session :', error);
+    res.status(200).json({ message: 'Error session' });
+    return;
+  }
+  
+});
+
+router.post('/contact', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
 
   if (!req.body) { 
     return res.status(400).json({ message: 'Request body is empty' }) 
