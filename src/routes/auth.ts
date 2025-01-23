@@ -133,7 +133,7 @@ router.post('/logout', async (req: Request,res: Response,next: NextFunction): Pr
 router.post('/active-session', async (req: Request,res: Response,next: NextFunction): Promise<any> => {
   const userId = req.session.userId;
 
-  if (userId === 1) {
+  if (userId === 1 || userId === undefined || userId === null) {
     return res.status(401).json(null);
 
   } 
