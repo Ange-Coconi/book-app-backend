@@ -94,7 +94,7 @@ router.post('/folders', async (req: Request, res: Response): Promise<any> => {
 
   const { name, parentFolderId } = req.body;
 
-  if (!userId || !name || !parentFolderId) {
+  if (typeof userId !== 'number' || !name || !parentFolderId) {
     return res.status(403).json({ message: 'information missing' });
   }
 
@@ -119,12 +119,8 @@ router.post('/books', async (req: Request, res: Response): Promise<any> => {
   const userId = req.session.userId;
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const { title, format, padding, folderId } = req.body;
-  console.log(userId)
-  console.log(title)
-  console.log(folderId)
-  console.log(padding)
 
-  if (typeof userId !== 'number' || !title || !folderId || !padding) {
+  if (typeof userId !== 'number' || !title || typeof folderId !== 'number' || !padding) {
     return res.status(403).json({ message: 'information missing' });
   }
 
@@ -159,7 +155,7 @@ router.post('/books/upload', async (req: Request, res: Response): Promise<any> =
   if (userId === 1) return res.status(401).json({ message: 'user is not login' })
   const { dataUpload, format, padding, folderId } = req.body;
 
-  if (!userId || !dataUpload || !folderId || !padding) {
+  if (typeof userId !== 'number' || !dataUpload || typeof folderId !== 'number' || !padding) {
     return res.status(403).json({ message: 'information missing' });
   }
 
