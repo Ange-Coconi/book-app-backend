@@ -9,7 +9,7 @@ dotenv.config();
 async function main() {
   // Create user 0 (yourself)
   const hashedPassword0 = await bcrypt.hash(process.env.ADMIN_PASSWORD!, 10);
-  await prisma.user.upsert({
+  const user_0 = await prisma.user.upsert({
     where: { id: 0 },
     update: {},
     create: {
@@ -19,6 +19,8 @@ async function main() {
       email: 'admin@example.com',
     },
   });
+
+  prepopulate(user_0.id)
 
   // Create user 1 (unauthenticated user)
   const hashedPassword1 = await bcrypt.hash(process.env.GUEST_PASSWORD!, 10);
