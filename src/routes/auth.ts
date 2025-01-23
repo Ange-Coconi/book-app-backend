@@ -134,7 +134,7 @@ router.post('/active-session', async (req: Request,res: Response,next: NextFunct
   const userId = req.session.userId;
 
   if (userId === 1 || userId === undefined || userId === null) {
-    return res.status(401).json(null);
+    return res.status(200).json(null);
 
   } 
 
